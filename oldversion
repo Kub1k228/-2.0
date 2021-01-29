@@ -5,20 +5,12 @@
 #include <Windows.h>
 #include <time.h>
 #include <ctime>
-
+#include <string>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 
-void reverse(int a[], int asize, int b[], int bsize, int count)
-{
-
-	for (int i = 0; i < asize; i++)
-	{
-		b[count] = a[i];
-		count--;
-		//		cout << "msg reversed" << endl;            //       <--------| нужно для отладки
-	}
-}
 void  keylimit(int& a)
 {
 	a = a % 1000;
@@ -30,6 +22,10 @@ void  keylimit(int& a)
 	}
 	//	cout << "key OK" << endl;                         //       <--------| нужно для отладки
 }
+void to_64(int &chislo) {
+	if(chislo<0)
+		chislo=chislo+256;
+}
 
 
 int main()
@@ -38,46 +34,48 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	srand(time(NULL));
-	cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "0 - выход" << endl << "     Ваш ответ: ";
+	cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "   0 - выход" << endl << "     Ваш ответ: ";
 	cin >> answer;
+	
 	while (answer != 0)
 	{
+		//мисклик
 		if (answer != 1 && answer != 2 && answer != 0) {
 			system("cls");
 			cout << "ошибка";
 			Sleep(1000);
 			system("cls");
-			cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "0 - выход" << endl << "     Ваш ответ: ";
+			cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "   0 - выход" << endl << "     Ваш ответ: ";
 			cin >> answer;
 		}
+		
+		//................................................................................................................//
+		//шифратор
 		if (answer == 1) {
-			
+
 			cout << "  Введите сообщение для шифровки: " << endl << "  ";
-			cin.ignore();
+			
 			int const maxLengthmsg = 100000;
-			char msg[maxLengthmsg];
+			string msg;
+			cin.ignore();
+			getline(cin,msg);				// ввод сообщения
 
-			cin.getline(msg, 10000);				// ввод сообщения
+
 
 			
-
-			int count = 0;
-			int Lengthmsg = 0;
-			while (msg[count] != 0) {				 // считаем количество символов
-				Lengthmsg++;
-				count++;
-			}
+			int Lengthmsg = msg.size();
+			
 
 			//		cout << "symbols poshitani..." << endl;              //       <--------| нужно для отладки
-
-			int* msgcall = new int[Lengthmsg];
+			 
+			 vector <int> msgcall (Lengthmsg);
 			for (int i = 0; i < Lengthmsg; i++)
 			{
-				msgcall[i] = msg[i];
+				msgcall[i] = int (msg[i]);
 				//			cout << msgcall[i] << endl << endl;            // <-------------| Нужно было для отладки 
 
 			}
-
+			for_each(msgcall.begin() , msgcall.end(), to_64);
 
 
 			int keyEVEN = rand(); //создаем ключи на рамндоме
@@ -99,7 +97,7 @@ int main()
 			}
 
 
-
+			
 			//доп шифрование
 			int posSum = keyEVEN % 10;
 			int sumNumber = keyODD % 10;
@@ -111,56 +109,47 @@ int main()
 			//		cout << "4eto eshe poshitano" << endl;                // <-------------| Нужно было для отладки 
 
 					//разворот масива
-			int* msgcallreverse = new int[Lengthmsg];
-			int countreverse = Lengthmsg - 1;
-			reverse(msgcall, Lengthmsg, msgcallreverse, Lengthmsg, countreverse);
-
-
-
-			
-		
-
-		
-			
-			cout << "     Ваше сообщение: " << endl << endl;
+			reverse(msgcall.begin(), msgcall.end());
 	
-			
-			cout << endl << Lengthmsg << keyEVEN << keyODD<<endl;
+
+		cout << "     Ваше сообщение: " << endl << endl;
+
+
+			cout << endl << Lengthmsg << keyEVEN << keyODD << endl;
 			//вывод
-			for (int i = 0; i < Lengthmsg; i++)
+			for (int i = 0; i < msgcall.size(); i++)
 			{
-				cout << msgcallreverse[i] << endl;
-					
-
-
+				cout << msgcall[i] << endl;
 			}
-			
-			
-			cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "0 - выход" << endl << "     Ваш ответ: ";
+
+
+			cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "   0 - выход" << endl << "     Ваш ответ: ";
 			cin >> answer;
+			
+
 		}
+	//.................................................................................................................................................................
+		//дешифратор
+		
 		if (answer == 2)
 		{
-		
+
 			cout << " Введите сообщение   " << endl << "  ";
 			int key;
 			cin >> key;
 			int Lengthmsg = key / 1000000;//получили длину масива
-			
-			
-			int* msgcallreverse = new int[Lengthmsg];
+
+
+			vector <int> msgcall1(Lengthmsg);
 			for (int i = 0; i < Lengthmsg; i++)
 			{
 
-				cin >> msgcallreverse[i];
+				cin >> msgcall1[i];
 
 			}//получили сообщение в развернутом виде
 
-			
+			reverse(msgcall1.begin(), msgcall1.end());
 
-			int* msgcall = new int[Lengthmsg];
-			int count = Lengthmsg - 1;
-			reverse(msgcallreverse, Lengthmsg, msgcall, Lengthmsg, count); //развернули сообшение 
 
 
 			int keyODD = key % 1000;
@@ -172,29 +161,29 @@ int main()
 			int sumNumber = keyODD % 10;
 			for (int i = 0; i < Lengthmsg; i++)
 			{
-				if (msgcall[i] % posSum == 0)
-					msgcall[i] = msgcall[i] - 8;
+				if (msgcall1[i] % posSum == 0)
+					msgcall1[i] = msgcall1[i] - 8;
 			}
 			for (int i = 0; i < Lengthmsg; i++)
 			{
 				if (i % 2 == 0)
-					msgcall[i] = msgcall[i] / keyEVEN;
+					msgcall1[i] = msgcall1[i] / keyEVEN;
 				if (i % 2 != 0)
-					msgcall[i] = msgcall[i] / keyODD;
+					msgcall1[i] = msgcall1[i] / keyODD;
 			}
 
 			char msg[10000];
 
 			for (int i = 0; i < Lengthmsg; i++)
 			{
-				msg[i] = msgcall[i];
+				msg[i] = msgcall1[i];
 
 
 			}
 			cout << " Ваше расшифрованное сообщение:" << endl << endl;
 			for (int i = 0; i < Lengthmsg; i++)
 			{
-				cout<< msg[i];
+				cout << msg[i];
 
 
 			}
@@ -203,7 +192,12 @@ int main()
 			cin >> answer;
 		}
 
-	}
-	system("PAUSE");
+	
+        else {
+            cout << endl << "   Выберите операцию:" << endl << "   1 - Зашифровать данные" << endl << "   2 - Расшифровать данные" << endl << "   0 - выход" << endl << "     Ваш ответ: ";
+            cin >> answer;
+        }
+    }
+	
 
 }
